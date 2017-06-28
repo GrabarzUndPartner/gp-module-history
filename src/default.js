@@ -35,23 +35,22 @@ export default new(AmpersandState.extend(dataTypeDefinition, {
 
     initialize: function() {
         AmpersandState.prototype.initialize.apply(this, arguments);
-
         browserHistory.Adapter.bind(window, 'statechange', function() {
             this.registry.add(browserHistory.getState().data, {
                 merge: true
             });
         }.bind(this), false);
 
-        $(document).on('click', 'a[data-deep-name]', function(e) {
+        $(document).on('click', 'a[data-deep]', function(e) {
             e.preventDefault();
             var node = e.currentTarget;
             if (!!node.getAttribute('href').replace(/^#/, '')) {
                 this.update([{
-                    name: node.dataset.deepName,
+                    name: node.dataset.deep,
                     value: node.getAttribute('href').replace(/^#/, '') || null
                 }], node.getAttribute('title') || null);
             } else {
-                this.remove([node.dataset.deepName]);
+                this.remove([node.dataset.deep]);
             }
         }.bind(this));
 
