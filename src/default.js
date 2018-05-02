@@ -5,6 +5,9 @@ import AmpersandState from 'ampersand-state';
 import Registry from './Registry';
 import dataTypeDefinition from'gp-module-base/dataTypeDefinition';
 
+import uniq from 'lodash/uniq';
+import unionBy from 'lodash/unionBy';
+
 //https://www.npmjs.com/package/history-events
 
 export default new(AmpersandState.extend(dataTypeDefinition, {
@@ -22,13 +25,6 @@ export default new(AmpersandState.extend(dataTypeDefinition, {
             setOnce: true,
             default: function() {
                 return document.title;
-            }
-        },
-        defaultBaseFilename: {
-            type: 'string',
-            required: true,
-            default: function() {
-                return 'index.html';
             }
         }
     },
@@ -53,13 +49,6 @@ export default new(AmpersandState.extend(dataTypeDefinition, {
                 this.remove([node.dataset.deep]);
             }
         }.bind(this));
-
-        /**
-         * Set [history-base-filename] attribute on HTML or BODY tag, for override default base filename.
-         */
-        if (document.querySelector('[data-history-base-filename]')) {
-            this.defaultBaseFilename = document.querySelector('[data-history-base-filename]').getAttribute('data-history-base-filename');
-        }
 
         var state = this.registry.toJSON();
         browserHistory.replaceState(state, getTitle.bind(this)(state), toQueryString(state, this.defaultBaseFilename));
@@ -90,9 +79,9 @@ export default new(AmpersandState.extend(dataTypeDefinition, {
     update: function(map, title) {
         var collection = updateSerializedCollection(this.registry.toJSON(), map);
         if (title) {
-            browserHistory.pushState(collection, title, toQueryString(collection, this.defaultBaseFilename));
+            browserHistory.pushState(collection, title, toQueryString(collection));
         } else {
-            browserHistory.replaceState(collection, browserHistory.getState().title, toQueryString(collection, this.defaultBaseFilename));
+            browserHistory.replaceState(collection, browserHistory.getState().title, toQueryString(collection));
         }
     },
 
@@ -121,7 +110,7 @@ function updateSerializedCollection(collection, map) {
     return mergeCollections(collection, map, 'name');
 }
 
-function toQueryString(collection, defaultBaseFilename) {
+function toQueryString(collection) {
     var result = collection.filter(function(item) {
         return item.value !== null;
     }).map(function(item) {
@@ -130,12 +119,10 @@ function toQueryString(collection, defaultBaseFilename) {
     if (result.length) {
         return '?' + result.join('&');
     } else {
-        return location.pathname.split('/').slice(-1)[0] || defaultBaseFilename;
+        return location.pathname.split('/').slice(-1)[0];
     }
 }
 
-import uniq from 'lodash/uniq';
-import unionBy from 'lodash/unionBy';
 function mergeCollections(collectionA, collectionB, by) {
    return uniq(unionBy(collectionB, collectionA, by), false, by);
 }
