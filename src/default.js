@@ -3,7 +3,7 @@
 import browserHistory from 'exports-loader?History!historyjs/scripts/bundled-uncompressed/html5/native.history';
 import AmpersandState from 'ampersand-state';
 import Registry from './Registry';
-import dataTypeDefinition from'gp-module-base/dataTypeDefinition';
+import dataTypeDefinition from 'gp-module-base/dataTypeDefinition';
 
 import uniq from 'lodash/uniq';
 import unionBy from 'lodash/unionBy';
@@ -26,6 +26,11 @@ export default new(AmpersandState.extend(dataTypeDefinition, {
             default: function() {
                 return document.title;
             }
+        },
+        defaultBaseName: {
+            type: 'string',
+            required: true,
+            default: '?'
         }
     },
 
@@ -79,9 +84,9 @@ export default new(AmpersandState.extend(dataTypeDefinition, {
     update: function(map, title) {
         var collection = updateSerializedCollection(this.registry.toJSON(), map);
         if (title) {
-            browserHistory.pushState(collection, title, toQueryString(collection));
+            browserHistory.pushState(collection, title, toQueryString(collection, this.defaultBaseName));
         } else {
-            browserHistory.replaceState(collection, browserHistory.getState().title, toQueryString(collection));
+            browserHistory.replaceState(collection, browserHistory.getState().title, toQueryString(collection, this.defaultBaseName));
         }
     },
 
@@ -110,7 +115,7 @@ function updateSerializedCollection(collection, map) {
     return mergeCollections(collection, map, 'name');
 }
 
-function toQueryString(collection) {
+function toQueryString(collection, defaultBaseName) {
     var result = collection.filter(function(item) {
         return item.value !== null;
     }).map(function(item) {
@@ -119,10 +124,11 @@ function toQueryString(collection) {
     if (result.length) {
         return '?' + result.join('&');
     } else {
-        return location.pathname.split('/').slice(-1)[0];
+        return location.pathname.split('/').slice(-1)[0] || defaultBaseName;
     }
 }
 
 function mergeCollections(collectionA, collectionB, by) {
-   return uniq(unionBy(collectionB, collectionA, by), false, by);
+    console.log('mergeCollections', collectionB, collectionA);
+    return uniq(unionBy(collectionB, collectionA, by), false, by);
 }

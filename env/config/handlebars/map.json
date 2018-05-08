@@ -3,6 +3,9 @@
   "task": "gp-boilerplate-environment/lib/tasks/handlebars",
   "config": {
     "options": {
+      "registerController": {
+        "src": ["<%= destination %>/**/*.html"]
+      },
       "assets": "<%= destination %>/assets/",
       "layouts": {
         "files": {

@@ -1,0 +1,23 @@
+---
+title: 'Deep Test'
+---
+<div class="partial controller" data-partial="atoms/deep" data-controller="./partials/atoms/Deep"{{#if deep-name}} data-deep-name="{{{deep-name}}}"{{/if}}{{#if deep-value}} data-deep-value="{{{deep-value}}}"{{/if}}>
+  <div class="deep__content">
+    <h1>{{{title}}} [{{{deep-name}}}]</h1>
+    <p>
+      Value: <span class="deep__content__value" data-hook="deepContentValue"></span>
+    </p>
+
+    <a data-deep="{{{deep-name}}}" href="#{{{deep-value}}}">Ohne Title (REPLACE)</a> - <a data-deep="{{{deep-name}}}" href="#{{{deep-value}}}" title="Mit Title">Mit Title (PUSH)</a>
+
+    <hr />
+
+        <button data-hook="resetHistoryButton">Reset</button>
+            <button data-hook="replaceStateButton">Replace State</button>
+    <button data-hook="addStateButton">Add State</button>
+    <button data-hook="removeStateButton">Remove State</button>
+        <hr />
+    <label><input type="checkbox" data-hook="withTitleCheckbox" />Mit Title?</label>
+    <button data-hook="removeByValueWithTitleStateButton">Remove By Value State</button>
+  </div>
+</div>

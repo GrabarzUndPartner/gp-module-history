@@ -6,4 +6,7 @@ import 'jquery/../event/trigger';
 import 'jquery/../data';
 import 'modernizr-loader!modernizr';
 
-import '../../src/default';
+import js from 'gp-module-parser';
+import packages from './packages';
+
+js.parse(null, packages);
